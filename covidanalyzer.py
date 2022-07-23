@@ -28,7 +28,8 @@ def given_country_stats(country_name):
         reader_obj = csv.DictReader(file_obj)
         for row in reader_obj:
             if str(country_name != 'Total'):
-                if str(country_name) == row['country']:
+                if str(country_name) == "-a " + row['country']:
+                    print("-a " + row['country'])
                     getting_ratio = int(row['total_recovered']) / int(row['total_cases'])
                     print('Recovered/total ratio: ', round(getting_ratio, 2))
                     break
@@ -39,12 +40,15 @@ def given_country_stats(country_name):
                 pass
 
 
-def economic_measure(total_country, total_cases, total_deaths):
-    getting_final_ratio = (total_deaths * 100) / total_cases
-    print(f'{round(getting_final_ratio, 2)}% death average found in {total_country} countries.')
+def economic_measure(economic_measure_string, total_country, total_cases, total_deaths):
+    if str(economic_measure_string) == '-b Economic measures':
+        getting_final_ratio = (total_deaths * 100) / total_cases
+        print(f'{round(getting_final_ratio, 2)}% death average found in {total_country} countries.')
+    else:
+        print("Does not matched")
 
 
-def safety_measure(total_recovered_cases, total_cases):
+def safety_measure(safety_param, total_recovered_cases, total_cases):
     count_economic_measures = 0
     limit_public_gatherings = 0
     quarantine_policies = 0
@@ -53,8 +57,8 @@ def safety_measure(total_recovered_cases, total_cases):
 
     with open('covid_safety_measures.csv') as file_obj:
         reader_obj = csv.DictReader(file_obj)
-        for row in reader_obj:
-            if row:
+        if str(safety_param) == '-c':
+            for row in reader_obj:
                 if row['measure'] == 'Economic measures':
                     count_economic_measures += 1
                 if row['measure'] == 'Limit public gatherings':
@@ -65,20 +69,20 @@ def safety_measure(total_recovered_cases, total_cases):
                     public_health_system += 1
                 if row['measure'] == 'International flights suspension':
                     flight_suspension += 1
-            else:
-                pass
 
-        calculate_efficiency = total_recovered_cases / total_cases
-        economic_measures = count_economic_measures / calculate_efficiency
-        print('Economic measures: ', int(economic_measures))
-        economic_measures = limit_public_gatherings / calculate_efficiency
-        print('Limit public gatherings:', int(economic_measures))
-        economic_measures = limit_public_gatherings / calculate_efficiency
-        print('Introduction of quarantine policies:', int(economic_measures))
-        economic_measures = public_health_system / calculate_efficiency
-        print('Strengthening the public health system:', int(economic_measures))
-        economic_measures = flight_suspension / calculate_efficiency
-        print('International flights suspension:', int(economic_measures))
+            calculate_efficiency = total_recovered_cases / total_cases
+            economic_measures = count_economic_measures / calculate_efficiency
+            print('Economic measures: ', int(economic_measures))
+            economic_measures = limit_public_gatherings / calculate_efficiency
+            print('Limit public gatherings:', int(economic_measures))
+            economic_measures = limit_public_gatherings / calculate_efficiency
+            print('Introduction of quarantine policies:', int(economic_measures))
+            economic_measures = public_health_system / calculate_efficiency
+            print('Strengthening the public health system:', int(economic_measures))
+            economic_measures = flight_suspension / calculate_efficiency
+            print('International flights suspension:', int(economic_measures))
+        else:
+            print("Does not match")
 
 
 # Press the green button in the gutter to run the script.
@@ -98,22 +102,19 @@ if __name__ == '__main__':
 
     # Check Country Stats by Name
 
-    country_name = input("Enter Country Name: ")
+    country_name = input("")
     given_country_stats(country_name)
     print("=======================End Task 1=================================")
 
     # Searching for Econimical Measures
-    economic_measure_string = input("Which safety measure want to find? Please enter: ")
-    if str(economic_measure_string):
-        economic_measure(total_country,
+    economic_measure_string = input("")
+    economic_measure(economic_measure_string,
+                         total_country,
                          total_cases,
                          total_deaths)
-    else:
-        print("Does not matched")
     print("=======================End Task 2=================================")
 
     # Calculate Safety Measures
-
-    safety_measure(total_recovered_cases, total_cases)
+    safety_param = input("")
+    safety_measure(safety_param, total_recovered_cases, total_cases)
     print("=======================End Task 3=================================")
-    
