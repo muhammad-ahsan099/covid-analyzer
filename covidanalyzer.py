@@ -116,3 +116,4 @@ if __name__ == '__main__':
 
     safety_measure(total_recovered_cases, total_cases)
     print("=======================End Task 3=================================")
+    
