@@ -79,7 +79,6 @@ def safety_measure(total_recovered_cases, total_cases):
         print('Strengthening the public health system:', int(economic_measures))
         economic_measures = flight_suspension / calculate_efficiency
         print('International flights suspension:', int(economic_measures))
-        print("========================================================")
 
 
 # Press the green button in the gutter to run the script.
@@ -104,7 +103,7 @@ if __name__ == '__main__':
     print("=======================End Task 1=================================")
 
     # Searching for Econimical Measures
-    economic_measure_string = input("Which safety measure want to find? Please enter")
+    economic_measure_string = input("Which safety measure want to find? Please enter: ")
     if str(economic_measure_string):
         economic_measure(total_country,
                          total_cases,
