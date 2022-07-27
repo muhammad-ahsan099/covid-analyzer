@@ -1,64 +1,61 @@
 import csv
 
 
-def total_country_cases_deaths(total_country,
-                               total_cases,
-                               total_deaths,
-                               total_recovered_cases):
-    with open('covid_cases_stats.csv') as file_obj:
-        reader_obj = csv.DictReader(file_obj)
-        for row in reader_obj:
-            if row['country'] != 'Total:':
-                if row['country']:
-                    total_country += 1
-                if row['total_deaths']:
-                    total_deaths += int(row['total_deaths'])
-                if row['total_cases']:
-                    total_cases += int(row['total_cases'])
-                if row['total_recovered']:
-                    total_recovered_cases += int(row['total_recovered'])
-            else:
-                pass
+def calculate_recovery_death_cases_count():
+    countries_count = 0
+    total_cases = 0
+    total_deaths = 0
+    total_recovered_cases = 0
+    seen_countries = []
 
-        return total_country, total_cases, total_deaths, total_recovered_cases
+    with open('covid_cases_stats.csv') as covid_data:
+        covid_reader = csv.DictReader(covid_data)
+        for row in covid_reader:
+            if row['country'] not in (single_country['country'] for single_country in seen_countries):
+                seen_countries.append(row)
 
+    for country in seen_countries:
+        if country['country'] != '':
+            countries_count += 1
+        if country['total_deaths'] != '':
+            total_deaths += int(country['total_deaths'])
+        if country['total_cases'] != '':
+            total_cases += int(country['total_cases'])
+        if country['total_recovered'] != '':
+            total_recovered_cases += int(country['total_recovered'])
 
-def given_country_stats(country_name):
-    with open('covid_cases_stats.csv') as file_obj:
-        reader_obj = csv.DictReader(file_obj)
-        for row in reader_obj:
-            if str(country_name != 'Total'):
-                if str(country_name) == "-a " + row['country']:
-                    print("-a " + row['country'])
-                    getting_ratio = int(row['total_recovered']) / int(row['total_cases'])
-                    print('Recovered/total ratio: ', round(getting_ratio, 2))
-                    break
-                else:
-                    print("Country Does Not Find")
-                    break
-            else:
-                pass
+    return dict(total_countries=countries_count,
+                total_cases=total_cases,
+                total_deaths=total_deaths,
+                total_recovered_cases=total_recovered_cases,
+                covid_data=seen_countries)
 
 
-def economic_measure(economic_measure_string, total_country, total_cases, total_deaths):
-    if str(economic_measure_string) == '-b Economic measures':
-        getting_final_ratio = (total_deaths * 100) / total_cases
-        print(f'{round(getting_final_ratio, 2)}% death average found in {total_country} countries.')
-    else:
-        print("Does not matched")
+def given_country_stats(country_name, covid_data):
+    for row in covid_data:
+        if str(country_name) == row['country']:
+            ratio_value = int(row['total_recovered']) / int(row['total_cases'])
+            return round(ratio_value, 2)
 
 
-def safety_measure(safety_param, total_recovered_cases, total_cases):
+def economic_measure(economic_measure_param, total_cases, total_deaths):
+    if str(economic_measure_param).lower() == str('Economic measures').lower():
+        getting_total_ratios = (total_deaths * 100) / total_cases
+
+        return round(getting_total_ratios, 2)
+
+
+def safety_measure(safety_measure_param, total_recovered_cases, total_cases):
     count_economic_measures = 0
     limit_public_gatherings = 0
     quarantine_policies = 0
     public_health_system = 0
     flight_suspension = 0
 
-    with open('covid_safety_measures.csv') as file_obj:
-        reader_obj = csv.DictReader(file_obj)
-        if str(safety_param) == '-c':
-            for row in reader_obj:
+    with open('covid_safety_measures.csv') as covid_safety_measure:
+        reader_covid_measures = csv.DictReader(covid_safety_measure)
+        if str(safety_measure_param) == '-c':
+            for row in reader_covid_measures:
                 if row['measure'] == 'Economic measures':
                     count_economic_measures += 1
                 if row['measure'] == 'Limit public gatherings':
@@ -71,50 +68,53 @@ def safety_measure(safety_param, total_recovered_cases, total_cases):
                     flight_suspension += 1
 
             calculate_efficiency = total_recovered_cases / total_cases
-            economic_measures = count_economic_measures / calculate_efficiency
-            print('Economic measures: ', int(economic_measures))
-            economic_measures = limit_public_gatherings / calculate_efficiency
-            print('Limit public gatherings:', int(economic_measures))
-            economic_measures = limit_public_gatherings / calculate_efficiency
-            print('Introduction of quarantine policies:', int(economic_measures))
-            economic_measures = public_health_system / calculate_efficiency
-            print('Strengthening the public health system:', int(economic_measures))
-            economic_measures = flight_suspension / calculate_efficiency
-            print('International flights suspension:', int(economic_measures))
-        else:
-            print("Does not match")
+            count_economic_measures = count_economic_measures / calculate_efficiency
+            limit_public_gatherings = limit_public_gatherings / calculate_efficiency
+            quarantine_policies = quarantine_policies / calculate_efficiency
+            public_health_system = public_health_system / calculate_efficiency
+            flight_suspension = flight_suspension / calculate_efficiency
+
+    return dict(economic_measures=int(count_economic_measures),
+                public_gatherings=int(limit_public_gatherings),
+                quarantine_policies=int(quarantine_policies),
+                public_health_system=int(public_health_system),
+                flight_suspension=int(flight_suspension))
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    total_country = 0
-    total_deaths = 0
-    total_cases = 0
-    total_recovered_cases = 0
-    all_stats = total_country_cases_deaths(total_country,
-                                           total_cases,
-                                           total_deaths,
-                                           total_recovered_cases)
-    total_country = all_stats[0]
-    total_cases = all_stats[1]
-    total_deaths = all_stats[2]
-    total_recovered_cases = all_stats[3]
+    all_stats = calculate_recovery_death_cases_count()
 
     # Check Country Stats by Name
 
     country_name = input("")
-    given_country_stats(country_name)
-    print("=======================End Task 1=================================")
+    getting_ratio = given_country_stats(country_name.lstrip('-a '),
+                                        all_stats['covid_data'])
+    if getting_ratio != None:
+        print('Recovered/total ratio: ', getting_ratio)
+
+    print("=================================End Task 1=================================")
 
     # Searching for Econimical Measures
-    economic_measure_string = input("")
-    economic_measure(economic_measure_string,
-                         total_country,
-                         total_cases,
-                         total_deaths)
-    print("=======================End Task 2=================================")
+
+    economic_measure_param = input("")
+    getting_total_ratios = economic_measure(economic_measure_param.lstrip('-b '),
+                                            all_stats['total_cases'],
+                                            all_stats['total_deaths'])
+    if getting_total_ratios != None:
+        print(getting_total_ratios, '% death average found in', all_stats["total_countries"], 'countries.')
+
+    print("=================================End Task 2=================================")
 
     # Calculate Safety Measures
-    safety_param = input("")
-    safety_measure(safety_param, total_recovered_cases, total_cases)
-    print("=======================End Task 3=================================")
+
+    safety_measure_param = input("")
+    safety_measure_data = safety_measure(safety_measure_param,
+                                         all_stats['total_recovered_cases'],
+                                         all_stats['total_cases'])
+    print('Economic measures: ', safety_measure_data['economic_measures'])
+    print('Limit public gatherings:', safety_measure_data['public_gatherings'])
+    print('Introduction of quarantine policies:', safety_measure_data['quarantine_policies'])
+    print('Strengthening the public health system:', safety_measure_data['public_health_system'])
+    print('International flights suspension:', safety_measure_data['flight_suspension'])
+
+    print("=================================End Task 3=================================")
