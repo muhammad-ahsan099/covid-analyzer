@@ -6,7 +6,7 @@ from sty import fg
 
 
 class ReadWheatherFiles:
-    path = "/Users/ahsan/Desktop/ArbiSoft/weatherman/weatherfiles"
+    path = "/Users/ahsan/Desktop/ArbiSoft/Tasks/weatherman/weatherfiles"
     files_weather_data = {}
 
     def reading_weather_files(self):
@@ -70,8 +70,8 @@ class WeatherCalculations:
 
         max_temp = WeatherCalculations.find_max(max_temp, 'Max TemperatureC')
         min_temp = WeatherCalculations.find_min(min_temp, 'Min TemperatureC')
-        max_humidity = WeatherCalculations.find_min(max_humidity, 'Max Humidity')
-        min_humidity = WeatherCalculations.find_max(min_humidity, ' Min Humidity')
+        max_humidity = WeatherCalculations.find_max(max_humidity, 'Max Humidity')
+        min_humidity = WeatherCalculations.find_min(min_humidity, ' Min Humidity')
 
         if param_user_input == str('-a') or\
                 param_user_input == str('-e'):
