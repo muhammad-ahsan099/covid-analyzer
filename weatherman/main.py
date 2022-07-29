@@ -261,3 +261,4 @@ if __name__ == '__main__':
     userinput = input("")
     reading_cal = WeatherCalculations(weather_data, userinput)
     reading_cal.weather_calculations()
+
